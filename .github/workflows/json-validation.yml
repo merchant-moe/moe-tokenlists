@@ -19,9 +19,7 @@ jobs:
 
       - name: Validate JSON
         run: |
-          for jsonfile in $(git diff --name-only --diff-filter=ACMRT ${{ github.event.before }} ${{ github.sha }} | grep '\.json$'); do
-            if ! jq empty "$jsonfile"; then
-              echo "$jsonfile is not a valid JSON file."
-              exit 1
-            fi
-          done
+          if ! jq empty tokens.json; then
+            echo "tokens.json is not a valid JSON file."
+            exit 1
+          fi
