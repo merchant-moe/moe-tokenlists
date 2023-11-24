@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  # manual trigger
+  workflow_dispatch:
+
+jobs:
+  validate-json:
+    name: Validate JSON
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Validate JSON
+        run: |
+          for jsonfile in $(git diff --name-only --diff-filter=ACMRT ${{ github.event.before }} ${{ github.sha }} | grep '\.json$'); do
+            if ! jq empty "$jsonfile"; then
+              echo "$jsonfile is not a valid JSON file."
+              exit 1
+            fi
+          done
